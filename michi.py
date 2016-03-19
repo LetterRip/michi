@@ -500,13 +500,32 @@ def pat3_expand(pat):
         return [p for p in pat_wildexp(pat, '?', list('.XO '))
                   for p in pat_wildexp(p, 'x', list('.O '))
                   for p in pat_wildexp(p, 'o', list('.X '))]
+
+
     return [p for p in [pat, pat_rot90(pat)]
               for p in [p, pat_vertflip(p)]
               for p in [p, pat_horizflip(p)]
               for p in [p, pat_swapcolors(p)]
               for p in pat_wildcards(''.join(p))]
 
-pat3set = set([p.replace('O', 'x') for p in pat3src for p in pat3_expand(p)])
+def is_valid_pattern(p):
+    if p.count(' ') == 0:
+        return True
+    elif p.count(' ') == 3:
+        if ' ' == p[0] == p[1] == p[2]:
+            return True
+        elif ' ' == p[0] == p[3] == p[6]:
+            return True
+        elif ' ' == p[2] == p[5] == p[8]:
+            return True
+        elif ' ' == p[6] == p[7] == p[8]:
+            return True
+        else:
+            return False
+    else:
+        return False
+        
+pat3set = set([p.replace('O', 'x') for p in pat3src for p in pat3_expand(p) if is_valid_pattern(p)])
 
 def neighborhood_33(board, c):
     """ return a string containing the 9 points forming 3x3 square around
